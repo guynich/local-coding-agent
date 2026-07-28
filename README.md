@@ -15,6 +15,7 @@ Table of contents:
   - [Ollama memory use](#ollama-memory-use)
   - [Qwen Code Version](#qwen-code-version)
 - [References](#references)
+- [Suggestions](#suggestions)
 
 ## Background
 
@@ -58,7 +59,7 @@ ollama pull qwen3.6:35b-a3b-coding-nvfp4
 > Tag may change — check ollama.com/library/qwen3.6 if this tag fails.
 
 Launch the Ollama app and disable Auto-download updates; use
-`brew upgrade` instead.
+`brew upgrade` on the admin account instead.
 
 ## 2. SSH from Admin to Sandbox
 
@@ -109,7 +110,14 @@ These are minimal settings for a local-only setup:
   "telemetry": { "enabled": false, "logPrompts": false },
   "mcpServers": {},
   "artifact": { "publisher": "local", "autoOpen": false },
-  "tools": { "approvalMode": "default", "sandbox": true }
+  "tools": { "approvalMode": "default", "sandbox": true },
+  "permissions": {
+    "deny": [
+      "Bash(su *)",
+      "Bash(sudo *)",
+      "Bash(tmutil *)"
+    ]
+  }
 }
 ```
 
@@ -131,8 +139,11 @@ qwen
 
 ### Ollama memory use
 
-This setup can consume significant memory. Avoid running both `Ollama.app` and
-`ollama serve` simultaneously to prevent loading the model twice.
+This setup consumes significant memory. Account for applications running across
+both user accounts (browsers, IDEs, mail clients, built-in browser LLMs, etc.).
+
+Avoid running both `Ollama.app` and `ollama serve` simultaneously to prevent
+loading the model twice.
 
 ### Qwen Code Version
 
@@ -148,5 +159,14 @@ Qwen Code.
 - https://qwenlm.github.io/qwen-code-docs/en/users/configuration/settings/#permissions
 - https://qwenlm.github.io/qwen-code-docs/en/users/features/sandbox/#quickstart
 
-Ollama Qwen3.6 models.
+Ollama Qwen3.6 model tags.
 - https://ollama.com/library/qwen3.6/tags
+
+## Suggestions
+
+- The sandbox standard account can run online coding agents too (e.g.,
+Antigravity CLI or Claude Code). While not local, this still keeps your main
+admin account files isolated and private.
+- If your Mac has less memory, you can try a smaller model with lower resource
+requirements. On a 16GB MacBook, consider starting with [Qwen 2.5
+Coder](https://ollama.com/library/qwen2.5-coder).
