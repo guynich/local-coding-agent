@@ -24,10 +24,14 @@ This guide uses steps from this
 [excellent post by Sebastian Raschka](https://magazine.sebastianraschka.com/p/using-local-coding-agents) - read it first.
 
 This guide adds:
-1. Sandboxing for safety (standard account, plus
+1. Sandboxing for safety (macOS standard account, plus
 [Qwen Code's sandbox](https://qwenlm.github.io/qwen-code-docs/en/users/features/sandbox/)
 )
 2. Model parameters for coding
+
+This approach avoids the overhead of running a virtual machine or Docker
+container, so the agent has full access to macOS unified memory and native
+compute.
 
 ## Requirements
 
