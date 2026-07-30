@@ -78,7 +78,7 @@ into your project's `.qwen` folder and add two lines for Ollama access and SSH a
 > I added SSH access for git commands.  It would be safer to switch to
 > https for git, and remove the second line.
 
-The file should be named
+The file must be renamed to
 `sandbox-macos-permissive-proxied-ollama.sb`.
 
 ## 3. Sandbox environment variables
