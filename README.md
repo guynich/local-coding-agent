@@ -13,9 +13,10 @@ Table of contents:
 - [Usage](#usage)
 - [Maintenance](#maintenance)
   - [Ollama memory use](#ollama-memory-use)
-  - [Qwen Code Version](#qwen-code-version)
+  - [Qwen Code update](#qwen-code-update)
 - [References](#references)
 - [Suggestions](#suggestions)
+- [Next steps](#next-steps)
 
 ## Background
 
@@ -135,19 +136,29 @@ cd ~/src/my-project
 qwen
 ```
 
+Or run VS Code on the admin account.
+
+* Use the `Remote - SSH` extension to access the sandbox account "agent" in this screenshot.
+* Convenient recent links to project folders.
+* Qwen Code assistant runs in terminal.  It is using macOS "Seatbelt" sandboxing.
+
+<img src="/images/vs_code_qwen_agent.png" alt="VS Code with Remote - SSH extension" width="100%"/>
+
 ## Maintenance
 
 ### Ollama memory use
 
+Avoid running both Ollama app and command `ollama serve` simultaneously to
+prevent loading the model twice.
+
 This setup consumes significant memory. Account for applications running across
 both user accounts (browsers, IDEs, mail clients, built-in browser LLMs, etc.).
 
-Avoid running both `Ollama.app` and `ollama serve` simultaneously to prevent
-loading the model twice.
+### Qwen Code update
 
-### Qwen Code Version
+Check the version with `qwen --version`.
 
-Check the version with `qwen --version`. Re-run the install script to upgrade.
+Run `qwen update`.
 
 ## References
 
@@ -162,6 +173,9 @@ Qwen Code.
 Ollama Qwen3.6 model tags.
 - https://ollama.com/library/qwen3.6/tags
 
+My blog post with more discussion.
+- https://guynich.github.io/2026/07/28/local-sandboxed-coding-agent-macOS.html
+
 ## Suggestions
 
 - The sandbox standard account can run online coding agents too (e.g.,
@@ -170,3 +184,8 @@ admin account files isolated and private.
 - If your Mac has less memory, you can try a smaller model with lower resource
 requirements. On a 16GB MacBook, consider starting with [Qwen 2.5
 Coder](https://ollama.com/library/qwen2.5-coder).
+- Add a proxy allow list to filter sandbox agent internet access without blocking access to Ollama.  See [proxy guide](proxy.md) and [custom seatbelt profile](/.qwen/sandbox-macos-permissive-proxied-ollama.sb).
+
+## Next steps
+
+- [ ] Create a Modelfile from `qwen3.6:35b-mlx` with parameters adjusted for coding.
