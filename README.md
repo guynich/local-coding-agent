@@ -16,7 +16,6 @@ Table of contents:
   - [Qwen Code update](#qwen-code-update)
 - [References](#references)
 - [Suggestions](#suggestions)
-- [Next steps](#next-steps)
 
 ## Background
 
@@ -62,6 +61,8 @@ ollama pull qwen3.6:35b-a3b-coding-nvfp4
 ```
 
 > Tag may change — check ollama.com/library/qwen3.6 if this tag fails.
+> Instructions for creating this coding variant are in the
+> [coding model file](coding_model.md).
 
 Launch the Ollama app and disable Auto-download updates; use
 `brew upgrade` on the admin account instead.
@@ -96,6 +97,8 @@ SSH from admin into the sandbox account, then install:
 curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen-standalone.sh | bash
 qwen --version
 ```
+
+<a id="setup-qwen-code"></a>
 
 Set up Qwen Code to use the local Ollama model:
 
@@ -189,7 +192,4 @@ admin account files isolated and private.
 requirements. On a 16GB MacBook, consider starting with [Qwen 2.5
 Coder](https://ollama.com/library/qwen2.5-coder).
 - Add a proxy allow list to filter sandbox agent internet access without blocking access to Ollama.  See [proxy guide](proxy.md) and [custom seatbelt profile](/.qwen/sandbox-macos-permissive-proxied-ollama.sb).
-
-## Next steps
-
-- [ ] Create a Modelfile from `qwen3.6:35b-mlx` with parameters adjusted for coding.
+- Create a coding variant of `qwen3.6:35b-mlx`, see [coding_model.md](coding_model.md).
