@@ -40,7 +40,4 @@
 ;; ADDED to allow Ollama access from the Qwen Code sandbox.
 (allow network-outbound (remote tcp "localhost:11434"))
 
-;; ADDED to allow SSH access. e.g.: for git clone/pull/push.
-(allow network-outbound (remote tcp "*:22"))
-
 (allow network-bind (local ip "*:*"))

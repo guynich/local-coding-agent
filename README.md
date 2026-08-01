@@ -7,10 +7,10 @@ Table of contents:
 - [Background](#background)
 - [Requirements](#requirements)
 - [Accounts](#accounts)
-- [1. Ollama (Admin Account)](#1-ollama-admin-account)
+- [1. Ollama (Admin account)](#1-ollama-admin-account)
 - [2. SSH from Admin to Sandbox](#2-ssh-from-admin-to-sandbox)
-- [3. Qwen Code (Sandbox Account)](#3-qwen-code-sandbox-account)
-- [Usage](#usage)
+- [3. Qwen Code (Sandbox account)](#3-qwen-code-sandbox-account)
+- [Usage (Admin account)](#usage-admin-account)
 - [Maintenance](#maintenance)
   - [Ollama memory use](#ollama-memory-use)
   - [Qwen Code update](#qwen-code-update)
@@ -50,7 +50,7 @@ Key points:
 - Admin account can protect custom folders with `chmod 700 ~/<foldername>`
 - SSH access from admin account lets you edit in the sandbox, e.g.: use terminal or use VS Code with `Remote - SSH` extension
 
-## 1. Ollama (Admin Account)
+## 1. Ollama (Admin account)
 
 Install Ollama and pull the Qwen 3.6 coding model (the `qwen3.6:35b-mlx`
 model with two parameters changed for coding).
@@ -85,12 +85,12 @@ Ensure the admin account can SSH into the sandbox:
 ssh sandbox  # From admin to sandbox
 ```
 
-You do not need to login to the user account using macOS GUI for this SSH
-connection to work.
+* The sandbox has no path through SSH connection back into your local filesystem.
+* You do **not need to login** to the sandbox user account using macOS GUI
+for this SSH connection to work.
+* Beyond the scope of this guide are generating a key and copying to authorized users file on the sandbox account.
 
-Beyond the scope of this guide are generating a key and copying to authorized users file on the sandbox account.
-
-## 3. Qwen Code (Sandbox Account)
+## 3. Qwen Code (Sandbox account)
 
 SSH from admin into the sandbox account, then install:
 ```bash
@@ -131,9 +131,9 @@ These are minimal settings for a local-only setup:
 
 Note this uses Qwen Code's sandbox for added safety.
 
-## Usage
+## Usage (Admin account)
 
-In a terminal:
+From the admin account you can now drive the sandboxed agent. In a terminal:
 ```bash
 ssh sandbox
 ```
@@ -143,13 +143,22 @@ cd ~/src/my-project
 qwen
 ```
 
-Or run VS Code on the admin account.
+Or run VS Code from the admin account.
 
 * Use the `Remote - SSH` extension to access the sandbox account "agent" in this screenshot.
-* Convenient recent links to project folders.
+* Convenient recent links to project folders in the sandbox.
 * Qwen Code assistant runs in terminal.  It is using macOS "Seatbelt" sandboxing.
 
 <img src="/images/vs_code_qwen_agent.png" alt="VS Code with Remote - SSH extension" width="100%"/>
+
+To disable agents add this to your VS Code settings:
+
+```json
+{
+    "chat.disableAIFeatures": false,
+    "chat.agent.enabled": true,
+}
+```
 
 ## Maintenance
 

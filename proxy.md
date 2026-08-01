@@ -3,12 +3,17 @@
 This guide walks through setting up a lightweight local forward proxy outside
 the sandbox to restrict Qwen Code's internet access.
 
-- [1. Tinyproxy on the admin account](#1-tinyproxy-on-the-admin-account)
-- [2. Seatbelt profile in the project](#2-seatbelt-profile-in-the-project)
-- [3. Sandbox environment variables](#3-sandbox-environment-variables)
-- [4. Testing](#4-testing)
+- [Admin account](#admin-account)
+  - [Install Tinyproxy](#install-tinyproxy)
+- [Sandbox standard account](#sandbox-standard-account)
+  - [1. Add Seatbelt profile in your project](#1-add-seatbelt-profile-in-your-project)
+  - [2. Add environment variables](#2-add-environment-variables)
+  - [3. Edit SSH config for github.com](#3-edit-ssh-config-for-githubcom)
+  - [4. Testing](#4-testing)
 
-## 1. Tinyproxy on the admin account
+## Admin account
+
+### Install Tinyproxy
 
 Install and start Tinyproxy on the **admin** account:
 
@@ -64,24 +69,22 @@ Restart the proxy:
 brew services restart tinyproxy
 ```
 
-## 2. Seatbelt profile in the project
+## Sandbox standard account
+
+### 1. Add Seatbelt profile in your project
 
 Copy the Qwen Code
 [permissive-proxied profile](https://github.com/QwenLM/qwen-code/blob/main/packages/cli/src/utils/sandbox-macos-permissive-proxied.sb)
-into your project's `.qwen` folder and add two lines for Ollama access and SSH access to any address:
+into your project's `.qwen` folder and add a line for Ollama access:
 
 ```scheme
 (allow network-outbound (remote tcp "localhost:11434"))
-(allow network-outbound (remote tcp "*:22"))
 ```
-
-> I added SSH access for git commands.  It would be safer to switch to
-> https for git, and remove the second line.
 
 The file must be renamed to
 `sandbox-macos-permissive-proxied-ollama.sb`.
 
-## 3. Sandbox environment variables
+### 2. Add environment variables
 
 Add these to the sandbox account's shell rc file (`~/.bashrc` or
 `~/.zshrc`):
@@ -104,11 +107,35 @@ export no_proxy="localhost,127.0.0.1"
 
 Open a new terminal session after sourcing the profile.
 
-## 4. Testing
+### 3. Edit SSH config for github.com
+
+Adding an SSH config replaces the earlier less safe strategy.
+
+This section assumes you use SSH to connect with GitHub repo projects, and you
+have registered a public key from the standard account on GitHub.com SSH key
+settings.
+
+Standard SSH operations (e.g., `git clone git@github.com:...`) do not automatically use shell `HTTP_PROXY` environment variables.
+
+To route Git over SSH to GitHub through Tinyproxy from inside the sandbox, edit `~/.ssh/config` on the **sandbox account**:
+
+```sshconfig
+Host github.com
+  User git
+  ProxyCommand nc -X connect -x 127.0.0.1:8877 %h %p
+```
+
+**Why this is needed and how it works:**
+* **HTTP CONNECT Tunneling:** `ProxyCommand nc -X connect ...` instructs SSH to tunnel its connection to GitHub through Tinyproxy via HTTP `CONNECT`.
+* **No Sandbox DNS required:** SSH delegates hostname resolution for `github.com` to Tinyproxy outside the sandbox. You do not need to allow raw DNS (port 53) in Seatbelt.
+* **No open Port 22 rule required:** Outbound traffic from the sandbox goes to `127.0.0.1:8877` (which is already permitted by Seatbelt), avoiding the need to open general outbound port 22 access.
+* **Filtered by Tinyproxy:** SSH connections to GitHub are governed by your Tinyproxy `allowed_domains` list just like standard HTTP/HTTPS requests.
+
+### 4. Testing
 
 Verify the Seatbelt proxy filtering by prompting inside Qwen Code.
 
-e.g.: `what's the output of this command? url -I https://github.com`
+e.g.: `what's the output of this shell bash command? curl -I https://github.com`
 
 | Test                       | Command                                 | Expected                |
 |----------------------------|-----------------------------------------|-------------------------|
@@ -116,3 +143,30 @@ e.g.: `what's the output of this command? url -I https://github.com`
 | Allowed URL (via proxy)    | `curl -I https://github.com`            | `200 OK`                |
 | Blocked URL                | `curl -I https://example.com`           | `403 Filtered`          |
 | Direct IP (Seatbelt block) | `curl --noproxy '*' -I https://1.1.1.1` | `Connection failed (7)` |
+
+Assuming you have registered a public key at Github.com SSH key settings, again
+prompt in qwen:
+
+1. Standard Test Command
+   ```text
+   What's the output of this shell bash command? ssh -T git@github.com
+   ```
+   Expected Result:
+   ```console
+   Hi <your-username>! You've successfully authenticated, but GitHub does not provide shell access.
+   ```
+
+2. Verbose Test Command (To see the proxy in action).
+   To verify that SSH is actually tunneling through Tinyproxy via nc:
+   ```text
+   What's the output of this shell command? ssh -vvv -T git@github.com 2>&1 | grep -i "proxy"
+   ```
+   Expected Output:
+   ```console
+   debug1: Executing proxy command: nc -X connect -x 127.0.0.1:8877 github.com 22
+   Authenticated to github.com (via proxy) using "publickey".
+   ```
+   This confirms SSH is delegating the connection to nc over 127.0.0.1:8877
+   without making direct outbound connections.
+
+---
