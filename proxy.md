@@ -1,7 +1,7 @@
 **Proxy Setup — Tinyproxy + Seatbelt for Qwen Code**
 
 This guide walks through setting up a lightweight local forward proxy outside
-the sandbox to restrict Qwen Code's internet access.
+the sandbox to restrict Qwen Code's internet and file system access.
 
 - [Admin account](#admin-account)
   - [Install Tinyproxy](#install-tinyproxy)
@@ -10,6 +10,8 @@ the sandbox to restrict Qwen Code's internet access.
   - [2. Add environment variables](#2-add-environment-variables)
   - [3. Edit SSH config for github.com](#3-edit-ssh-config-for-githubcom)
   - [4. Testing](#4-testing)
+- [Troubleshooting](#troubleshooting)
+  - [Missing profile .sb](#missing-profile-sb)
 
 ## Admin account
 
@@ -75,9 +77,16 @@ brew services restart tinyproxy
 
 Copy the Qwen Code
 [permissive-proxied profile](https://github.com/QwenLM/qwen-code/blob/main/packages/cli/src/utils/sandbox-macos-permissive-proxied.sb)
-into your project's `.qwen` folder and add a line for Ollama access:
+into your project's `.qwen` folder.
+
+After the `(allow default)` line, add these two lines:
 
 ```scheme
+;; Blocks agent from reading mounted external drives and network shares
+(deny file-read* (subpath "/Volumes"))
+```
+```scheme
+;; Enables agent to access Ollama
 (allow network-outbound (remote tcp "localhost:11434"))
 ```
 
@@ -170,3 +179,11 @@ prompt in qwen:
    without making direct outbound connections.
 
 ---
+
+## Troubleshooting
+
+### Missing profile .sb
+
+Each project must contain a sandbox profile (e.g.:
+[sandbox-macos-permissive-proxied-ollama.sb](/.qwen/sandbox-macos-permissive-proxied-ollama.sb)
+) file in a top-level `.qwen` folder.  A symlink to a single folder should work.

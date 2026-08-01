@@ -1,9 +1,12 @@
 (version 1)
 ;; Copied from https://github.com/QwenLM/qwen-code/blob/main/packages/cli/src/utils/sandbox-macos-permissive-proxied.sb
-;; ADDED two lines - see below.
+;; Added two blocks - see ADDED below.
 
 ;; allow everything by default
 (allow default)
+
+;; ADDED deny all reads from /Volumes (mounted external drives, etc.)
+(deny file-read* (subpath "/Volumes"))
 
 ;; deny all writes EXCEPT under specific paths
 (deny file-write*)
