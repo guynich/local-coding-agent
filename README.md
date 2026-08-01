@@ -11,8 +11,11 @@ Table of contents:
 - [2. SSH from Admin to Sandbox](#2-ssh-from-admin-to-sandbox)
 - [3. Qwen Code (Sandbox account)](#3-qwen-code-sandbox-account)
 - [Usage (Admin account)](#usage-admin-account)
+  - [macOS Terminal app](#macos-terminal-app)
+  - [VS Code](#vs-code)
 - [Maintenance](#maintenance)
-  - [Ollama memory use](#ollama-memory-use)
+  - [Memory use](#memory-use)
+  - [Ollama update](#ollama-update)
   - [Qwen Code update](#qwen-code-update)
 - [References](#references)
 - [Suggestions](#suggestions)
@@ -47,8 +50,10 @@ company data stored in the admin home directory.
 
 Key points:
 
-- Admin account can protect custom folders with `chmod 700 ~/<foldername>`
-- SSH access from admin account lets you edit in the sandbox, e.g.: use terminal or use VS Code with `Remote - SSH` extension
+- SSH access from admin account lets you control agents in the sandbox, e.g.:
+  use terminal or use VS Code with `Remote - SSH` extension
+- Custom top-level folders in the admin account are visible in the sandbox.
+  Protect them with this command `chmod 700 ~/<foldername>`.
 
 ## 1. Ollama (Admin account)
 
@@ -85,9 +90,9 @@ Ensure the admin account can SSH into the sandbox:
 ssh sandbox  # From admin to sandbox
 ```
 
-* The sandbox has no path through SSH connection back into your local filesystem.
 * You do **not need to login** to the sandbox user account using macOS GUI
 for this SSH connection to work.
+* The sandbox has no path through SSH connection back into your local filesystem.
 * Beyond the scope of this guide are generating a key and copying to authorized users file on the sandbox account.
 
 ## 3. Qwen Code (Sandbox account)
@@ -133,42 +138,59 @@ Note this uses Qwen Code's sandbox for added safety.
 
 ## Usage (Admin account)
 
-From the admin account you can now drive the sandboxed agent. In a terminal:
+### macOS Terminal app
+
+From the admin account you can now drive the sandboxed agent. In a macOS
+terminal:
+
 ```bash
 ssh sandbox
 ```
+
 Then run Qwen Code in that shell, in your project folder:
+
 ```bash
 cd ~/src/my-project
 qwen
 ```
 
-Or run VS Code from the admin account.
+### VS Code
 
-* Use the `Remote - SSH` extension to access the sandbox account "agent" in this screenshot.
-* Convenient recent links to project folders in the sandbox.
-* Qwen Code assistant runs in terminal.  It is using macOS "Seatbelt" sandboxing.
+Run VS Code from the admin account. Install the `Remote - SSH` extension to
+access the sandbox account.
 
-<img src="/images/vs_code_qwen_agent.png" alt="VS Code with Remote - SSH extension" width="100%"/>
+<img src="/images/vs_code_qwen_agent.png" alt="Sandbox account is called 'agent'" width="100%"/>
 
-To disable agents add this to your VS Code settings:
+Notes.
 
-```json
-{
-    "chat.disableAIFeatures": false,
-    "chat.agent.enabled": true,
-}
-```
+* Run the Qwen Code agent in VS Code terminal.  It is using macOS "Seatbelt"
+  sandboxing.
+* Convenient one-click links to recent project folders in the sandbox.
+* If you sign in to GitHub through VS Code then **Copilot agents** are enabled.
+  To prevent data leakage, add these lines to VS Code `settings.json`:
+  ```json
+  {
+      "chat.disableAIFeatures": true,
+      "chat.agent.enabled": false,
+  }
+  ```
+  Restart VS Code.
 
 ## Maintenance
 
-### Ollama memory use
+### Memory use
 
 Avoid running both Ollama app and command `ollama serve` simultaneously to
 prevent loading the model twice.
 
 This setup consumes significant memory. Account for applications running across
 both user accounts (browsers, IDEs, mail clients, built-in browser LLMs, etc.).
+
+### Ollama update
+
+Ollama was installed via `brew`.
+
+Run `brew upgrade`.
 
 ### Qwen Code update
 
