@@ -5,6 +5,7 @@ user account using Ollama and Qwen Code.  No internet connection needed.
 
 Table of contents:
 - [Background](#background)
+- [Architecture](#architecture)
 - [Requirements](#requirements)
 - [Accounts](#accounts)
 - [1. Ollama (Admin account)](#1-ollama-admin-account)
@@ -17,8 +18,10 @@ Table of contents:
   - [Memory use](#memory-use)
   - [Ollama update](#ollama-update)
   - [Qwen Code update](#qwen-code-update)
+  - [Health check](#health-check)
 - [References](#references)
 - [Suggestions](#suggestions)
+- [License \& Notice](#license--notice)
 
 ## Background
 
@@ -35,6 +38,32 @@ This approach avoids the overhead of running a virtual machine or Docker
 container, so the agent has full access to macOS unified memory and native
 compute.
 
+## Architecture
+
+The guide assumes you use the macOS default admin account for your
+confidential data and development. The diagram below illustrates how components
+are isolated across macOS user accounts.
+
+```text
++-----------------------------------------------------------------------+
+| macOS Host                                                            |
+|                                                                       |
+| [Admin Account]                                                       |
+|   ├── Ollama Service (http://127.0.0.1:11434)                         |
+|   └── VS Code (SSH to sandbox standard account)                       |
+|                                                                       |
+| [Standard Account - sandbox]                                          |
+|   ├── Qwen Code CLI                                                   |
+|   ├── Seatbelt Profile (default macOS sandbox)                        |
+|   ├── VS Code Server (with Copilot agents)                            |
+|   └── Development code                                                |
+|                                                                       |
+| [Standard Account - optional isolation]                               |
+|   └── (e.g. general dev work or sensitive data storage)               |
+|                                                                       |
++-----------------------------------------------------------------------+
+```
+
 ## Requirements
 
 - macOS with Apple Silicon and sufficient memory to run a 22GB model (tested on MacBook Pro 48GB)
@@ -47,6 +76,9 @@ compute.
 
 The sandbox account prevents AI agents from accessing your personal or
 company data stored in the admin home directory.
+
+Optional: Choose a three-account setup to isolate personal admin and data,
+general dev work, and agent execution.
 
 Key points:
 
@@ -198,6 +230,16 @@ Check the version with `qwen --version`.
 
 Run `qwen update`.
 
+### Health check
+
+Run the health check script to verify services and environment:
+
+```bash
+chmod +x ./health_check.sh && ./health_check.sh
+# For proxied setup:
+./health_check.sh --proxy
+```
+
 ## References
 
 Excellent post.
@@ -222,5 +264,10 @@ admin account files isolated and private.
 - If your Mac has less memory, you can try a smaller model with lower resource
 requirements. On a 16GB MacBook, consider starting with [Qwen 2.5
 Coder](https://ollama.com/library/qwen2.5-coder).
-- Add a proxy allow list to filter sandbox agent internet access without blocking access to Ollama.  See [proxy guide](proxy.md) and [custom seatbelt profile](/.qwen/sandbox-macos-permissive-proxied-ollama.sb).
+- Add a proxy allow list to filter sandbox agent internet access without blocking access to Ollama.  See [proxy guide](proxy.md) and [custom seatbelt profile](.qwen/sandbox-macos-permissive-proxied-ollama.sb).
 - Create a coding variant of `qwen3.6:35b-mlx`, see [coding_model.md](coding_model.md).
+
+## License & Notice
+
+This project is licensed under the [MIT License](LICENSE).
+For third-party attributions and copied material, see the [NOTICE](NOTICE) file.

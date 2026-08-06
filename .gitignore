@@ -1,0 +1,17 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Editor & IDE settings
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Temporary & Log files
+*.log
+scratch/
+tmp/

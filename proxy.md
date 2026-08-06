@@ -3,6 +3,7 @@
 This guide walks through setting up a lightweight local forward proxy outside
 the sandbox to restrict Qwen Code's internet and file system access.
 
+- [Proxy Architecture](#proxy-architecture)
 - [Admin account](#admin-account)
   - [Install Tinyproxy](#install-tinyproxy)
 - [Sandbox standard account](#sandbox-standard-account)
@@ -12,6 +13,34 @@ the sandbox to restrict Qwen Code's internet and file system access.
   - [4. Testing](#4-testing)
 - [Troubleshooting](#troubleshooting)
   - [Missing profile .sb](#missing-profile-sb)
+  - [Ollama Connection Refused (Multi-user loopback)](#ollama-connection-refused-multi-user-loopback)
+
+## Proxy Architecture
+
+The diagram below illustrates how Tinyproxy, Seatbelt proxied profiles, and
+SSH ProxyCommand tunneling integrate into the sandbox setup:
+
+```text
++-----------------------------------------------------------------------+
+| macOS Host                                                            |
+|                                                                       |
+| [Admin Account]                                                       |
+|   ├── Ollama Service (http://127.0.0.1:11434)                         |
+|   ├── Tinyproxy (http://127.0.0.1:8877)                               |
+|   └── VS Code (SSH to sandbox standard account)                       |
+|                                                                       |
+| [Standard Account - sandbox]                                          |
+|   ├── Qwen Code CLI                                                   |
+|   ├── Seatbelt Profile (permissive-proxied-ollama)                    |
+|   ├── SSH ProxyCommand (Tunneling to GitHub over 127.0.0.1:8877)      |
+|   ├── VS Code Server (with Copilot agents)                            |
+|   └── Development code                                                |
+|                                                                       |
+| [Standard Account - optional isolation]                               |
+|   └── (e.g. general dev work or sensitive data storage)               |
+|                                                                       |
++-----------------------------------------------------------------------+
+```
 
 ## Admin account
 
@@ -185,5 +214,15 @@ prompt in qwen:
 ### Missing profile .sb
 
 Each project must contain a sandbox profile (e.g.:
-[sandbox-macos-permissive-proxied-ollama.sb](/.qwen/sandbox-macos-permissive-proxied-ollama.sb)
+[sandbox-macos-permissive-proxied-ollama.sb](.qwen/sandbox-macos-permissive-proxied-ollama.sb)
 ) file in a top-level `.qwen` folder.  A symlink to a single folder should work.
+
+### Ollama Connection Refused (Multi-user loopback)
+
+If the standard sandbox account receives `Connection refused` when accessing Ollama at `http://127.0.0.1:11434`, ensure Ollama on the admin account is explicitly set to listen on `127.0.0.1`:
+
+```sh
+# On Admin account shell or LaunchAgent configuration
+export OLLAMA_HOST="127.0.0.1:11434"
+```
+Restart Ollama on the admin account after exporting `OLLAMA_HOST`.
