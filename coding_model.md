@@ -129,3 +129,4 @@ then add a new entry with `id` and `name` referencing the new tag - keeping the 
 - [Ollama Modelfile docs](https://docs.ollama.com/modelfile)
 - [Ollama qwen3.6 model tags](https://ollama.com/library/qwen3.6/tags)
 - [Qwen Code model providers](https://qwenlm.github.io/qwen-code-docs/en/users/configuration/model-providers)
+- [Muse Glimmer smoke test](https://guynich.github.io/2026/08/11/meta-muse-glimmer.html)
