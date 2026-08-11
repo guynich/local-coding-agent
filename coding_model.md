@@ -16,6 +16,10 @@ the sampling parameters from `qwen3.6:35b-a3b-coding-nvfp4`.
 
 ## Background
 
+Qwen recommends sampling parameters for several generation tasks in
+the HuggingFace
+[Qwen 3.6 model card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B#using-qwen36-via-the-chat-completions-api).
+
 An [Ollama Modelfile](https://docs.ollama.com/guide/modelfile) is a simple text
 configuration file that controls how a model generates text. The key
 directives are:
@@ -25,13 +29,14 @@ directives are:
    `presence_penalty`
 - `TEMPLATE` — the prompt format the model expects
 
-The two tags `qwen3.6:35b-mlx` and `qwen3.6:35b-a3b-coding-nvfp4` ship the
-**same weights** but with two different default sampling parameters. The
-`-coding-nvfp4` tag is tuned for deterministic, low-variance code output.
+The two Ollama model tags `qwen3.6:35b-mlx` and `qwen3.6:35b-a3b-coding-nvfp4`
+ship the **same weights** but with two different default sampling parameters. The sampling parameter deltas for the coding tag are:
 
-The parameter deltas for the coding tag are:
 - temperature 0.6 (vs 1.0)
 - presence_penalty 0 (vs 1.5)
+
+These follow the recommended values in the
+[model card](https://huggingface.co/Qwen/Qwen3.6-35B-A3B#using-qwen36-via-the-chat-completions-api).
 
 ## Steps
 
@@ -43,7 +48,7 @@ cd
 ollama pull qwen3.6:35b-mlx
 ```
 
-Then create the new tag:
+Then create the new tag using the recommended sampling parameters:
 ```sh
 # 1. Create a Modelfile (in the current working directory)
 cat > Modelfile <<'EOF'
