@@ -36,7 +36,8 @@ This guide adds:
 
 This approach avoids the overhead of running a virtual machine or Docker
 container, so the agent has full access to macOS unified memory and native
-compute.
+compute. The LLM used in this guide can use 45 GB memory when generating
+code.
 
 ## Architecture
 
@@ -85,7 +86,8 @@ Key points:
 - SSH access from admin account lets you control agents in the sandbox, e.g.:
   use terminal or use VS Code with `Remote - SSH` extension
 - Custom top-level folders in the admin account are visible in the sandbox.
-  Protect them with this command `chmod 700 ~/<foldername>`.
+  Protect them with this command `chmod 700 ~/<foldername>`. Make sure private
+  keys in `~/.ssh` are not visible in the sandbox.
 
 ## 1. Ollama (Admin account)
 
