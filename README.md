@@ -3,7 +3,6 @@
 A minimal guide to running a local AI coding agent safely in a macOS standard
 user account using Ollama and Qwen Code.  No internet connection needed.
 
-Table of contents:
 - [Background](#background)
 - [Architecture](#architecture)
 - [Requirements](#requirements)
@@ -20,7 +19,10 @@ Table of contents:
   - [Qwen Code update](#qwen-code-update)
   - [Health check](#health-check)
 - [References](#references)
-- [Suggestions](#suggestions)
+- [Suggestions for next steps](#suggestions-for-next-steps)
+  - [Model](#model)
+  - [Proxy](#proxy)
+  - [Other coding assistants](#other-coding-assistants)
 - [License \& Notice](#license--notice)
 
 ## Background
@@ -29,15 +31,15 @@ This guide uses steps from this
 [excellent post by Sebastian Raschka](https://magazine.sebastianraschka.com/p/using-local-coding-agents) - read it first.
 
 This guide adds:
+
 1. Sandboxing for safety (macOS standard account, plus
-[Qwen Code's sandbox](https://qwenlm.github.io/qwen-code-docs/en/users/features/sandbox/)
-)
+   [Qwen Code's sandbox](https://qwenlm.github.io/qwen-code-docs/en/users/features/sandbox/))
 2. Model parameters for coding
 
 This approach avoids the overhead of running a virtual machine or Docker
 container, so the agent has full access to macOS unified memory and native
 compute. The LLM used in this guide can use 45 GB memory when generating
-code.
+code depending on context.
 
 ## Architecture
 
@@ -67,7 +69,8 @@ are isolated across macOS user accounts.
 
 ## Requirements
 
-- macOS with Apple Silicon and sufficient memory to run a 22GB model (tested on MacBook Pro 48GB)
+- macOS with Apple Silicon and sufficient memory to run a 22GB model (tested
+  on MacBook Pro 48GB)
 - Two macOS accounts:
   - **Admin** (primary, e.g. `myname` or `main`)
   - **Sandbox** (standard user, e.g. `sandboxuser` or `agent`)
@@ -77,6 +80,12 @@ are isolated across macOS user accounts.
 
 The sandbox account prevents AI agents from accessing your personal or
 company data stored in the admin home directory.
+
+Recommended: make the standard account headless.  This avoids having to
+switch accounts using the macOS GUI. Instead use SSH to work in the
+sandbox.  See
+[headless-mac-server](https://github.com/quanhua92/headless-mac-server/tree/main)
+repo for a scripted approach to the set-up.
 
 Optional: Choose a three-account setup to isolate personal admin and data,
 general dev work, and agent execution.
@@ -91,15 +100,15 @@ Key points:
 
 ## 1. Ollama (Admin account)
 
-Install Ollama and pull the Qwen 3.6 coding model (the `qwen3.6:35b-mlx`
-model with two parameters changed for coding).
+Install Ollama and pull the Qwen 3.6 coding model (or see
+[coding_model.md](coding_model.md) to build the MLX variant).
 
 ```bash
 brew install --cask ollama
 ollama pull qwen3.6:35b-a3b-coding-nvfp4
 ```
 
-> Tag may change — check ollama.com/library/qwen3.6 if this tag fails.
+> Tag may change - check ollama.com/library/qwen3.6 if this tag fails.
 > Instructions for creating this coding variant are in the
 > [coding model file](coding_model.md).
 
@@ -126,8 +135,10 @@ ssh sandbox  # From admin to sandbox
 
 * You do **not need to login** to the sandbox user account using macOS GUI
 for this SSH connection to work.
-* The sandbox has no path through SSH connection back into your local filesystem.
-* Beyond the scope of this guide are generating a key and copying to authorized users file on the sandbox account.
+* The sandbox has no path through SSH connection back into your local
+  filesystem.
+* Beyond the scope of this guide are generating a key and copying to authorized
+  users file on the sandbox account.
 
 ## 3. Qwen Code (Sandbox account)
 
@@ -148,7 +159,8 @@ Set up Qwen Code to use the local Ollama model:
    - API Key: `ollama`
    - Model ID: `qwen3.6:35b-a3b-coding-nvfp4`
 
-These are minimal settings for a local-only setup:
+These are minimal privacy and sandbox settings for a local-only setup (add
+these alongside the `modelProviders` configuration):
 
 ```json
 {
@@ -193,7 +205,11 @@ qwen
 Run VS Code from the admin account. Install the `Remote - SSH` extension to
 access the sandbox account.
 
-<img src="/images/vs_code_qwen_agent.png" alt="Sandbox account is called 'agent'" width="100%"/>
+<img
+  src="images/vs_code_qwen_agent.png"
+  alt="Sandbox account is called 'agent'"
+  width="100%"
+/>
 
 Notes.
 
@@ -205,7 +221,7 @@ Notes.
   ```json
   {
       "chat.disableAIFeatures": true,
-      "chat.agent.enabled": false,
+      "chat.agent.enabled": false
   }
   ```
   Restart VS Code.
@@ -258,16 +274,25 @@ Ollama Qwen3.6 model tags.
 My blog post with more discussion.
 - https://guynich.github.io/2026/07/28/local-sandboxed-coding-agent-macOS.html
 
-## Suggestions
+## Suggestions for next steps
 
-- The sandbox standard account can run online coding agents too (e.g.,
-Antigravity CLI or Claude Code). While not local, this still keeps your main
-admin account files isolated and private.
-- If your Mac has less memory, you can try a smaller model with lower resource
-requirements. On a 16GB MacBook, consider starting with [Qwen 2.5
-Coder](https://ollama.com/library/qwen2.5-coder).
-- Add a proxy allow list to filter sandbox agent internet access without blocking access to Ollama.  See [proxy guide](proxy.md) and [custom seatbelt profile](.qwen/sandbox-macos-permissive-proxied-ollama.sb).
-- Create a coding variant of `qwen3.6:35b-mlx`, see [coding_model.md](coding_model.md).
+### Model
+
+I tried the smaller [Qwen 2.5 Coder](https://ollama.com/library/qwen2.5-coder)
+but it was not useful. I created a coding variant of `qwen3.6:35b-mlx`, see
+[coding_model.md](coding_model.md).
+
+### Proxy
+
+Add a proxy on the admin account with deny and allow lists to filter internet
+access for the sandbox account agents.  See
+[proxy guide](proxy.md) and
+[custom seatbelt profile](.qwen/sandbox-macos-permissive-proxied-ollama.sb).
+
+### Other coding assistants
+
+Run online coding agents in the sandbox (e.g., Antigravity CLI or Claude Code).
+Whilst not local, this still isolates your main account data.
 
 ## License & Notice
 

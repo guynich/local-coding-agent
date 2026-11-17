@@ -24,10 +24,10 @@ An [Ollama Modelfile](https://docs.ollama.com/guide/modelfile) is a simple text
 configuration file that controls how a model generates text. The key
 directives are:
 
-- `FROM` — which base model to use (the weights)
-- `PARAMETER` — sampling settings such as `temperature`,
+- `FROM` - which base model to use (the weights)
+- `PARAMETER` - sampling settings such as `temperature`,
    `presence_penalty`
-- `TEMPLATE` — the prompt format the model expects
+- `TEMPLATE` - the prompt format the model expects
 
 The two Ollama model tags `qwen3.6:35b-mlx` and `qwen3.6:35b-a3b-coding-nvfp4`
 ship the **same weights** but with two different default sampling parameters. The sampling parameter deltas for the coding tag are:
@@ -75,7 +75,7 @@ but the coding-specific sampling defaults.
 ### Update Qwen Code to use coding model (sandbox account)
 
 The following steps assume you already initialized Qwen Code to use another model. If not, then skip this section and follow the
-[setup in README](/README.md#setup-qwen-code) using Model ID
+[setup in README](README.md#setup-qwen-code) using Model ID
 `qwen3.6:35b-coding-mlx` and you are then finished.
 
 After creating the new model on the **admin** account, switch Qwen Code to use
@@ -109,7 +109,7 @@ nano ~/.qwen/settings.json
 Copy an entry for an existing model from the `modelProviders.openai` array,
 then add a new entry with `id` and `name` referencing the new tag - keeping the same `baseURL`, `envKey`, and `generationConfig`.
 
-<img src="/images/settings_model_arrays.png" alt="modelProviders.openai model arrays in settings.json" width="100%"/>
+<img src="images/settings_model_arrays.png" alt="modelProviders.openai model arrays in settings.json" width="100%"/>
 
 #### Save and test
 

@@ -1,4 +1,4 @@
-**Proxy Setup — Tinyproxy + Seatbelt for Qwen Code**
+**Proxy Setup - Tinyproxy + Seatbelt for Qwen Code**
 
 This guide walks through setting up a lightweight local forward proxy outside
 the sandbox to restrict Qwen Code's internet and file system access.

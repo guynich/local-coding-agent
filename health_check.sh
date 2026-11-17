@@ -18,7 +18,7 @@ if [ "$1" = "--proxy" ] || [ "$1" = "-p" ] || [ -n "$HTTP_PROXY" ] || [ -n "$SEA
 fi
 
 echo "=================================================="
-echo " Local Sandboxed Coding Agent — Health Check"
+echo " Local Sandboxed Coding Agent - Health Check"
 echo "=================================================="
 echo ""
 
@@ -56,7 +56,7 @@ if [ "$CHECK_PROXY" = true ]; then
         ERRORS=$((ERRORS + 1))
     fi
 else
-    echo -e "${BLUE}SKIPPED${NC} (Optional proxy setup — use '--proxy' to enable)"
+    echo -e "${BLUE}SKIPPED${NC} (Optional proxy setup - use '--proxy' to enable)"
 fi
 
 # 4. Check Seatbelt profile file (Optional setup from proxy.md)
@@ -73,7 +73,7 @@ if [ "$CHECK_PROXY" = true ]; then
         WARNINGS=$((WARNINGS + 1))
     fi
 else
-    echo -e "${BLUE}SKIPPED${NC} (Optional proxy setup — see proxy.md)"
+    echo -e "${BLUE}SKIPPED${NC} (Optional proxy setup - see proxy.md)"
 fi
 
 echo ""
@@ -84,5 +84,7 @@ elif [ $ERRORS -eq 0 ]; then
     echo -e "${YELLOW}Checks completed with $WARNINGS warning(s).${NC}"
 else
     echo -e "${RED}Health check completed with $ERRORS error(s) and $WARNINGS warning(s).${NC}"
+    echo "=================================================="
+    exit 1
 fi
 echo "=================================================="
