@@ -23,6 +23,7 @@ user account using Ollama and Qwen Code.  No internet connection needed.
   - [Model](#model)
   - [Proxy](#proxy)
   - [Other coding assistants](#other-coding-assistants)
+  - [Machine user account](#machine-user-account)
 - [License \& Notice](#license--notice)
 
 ## Background
@@ -293,6 +294,14 @@ access for the sandbox account agents.  See
 
 Run online coding agents in the sandbox (e.g., Antigravity CLI or Claude Code).
 Whilst not local, this still isolates your main account data.
+
+### Machine user account
+
+Using a
+[GitHub machine user account](https://docs.github.com/en/get-started/learning-about-github/types-of-github-accounts)
+in the sandbox account protects your personal GitHub account data.  Mine is
+called `guynich-agent` and is a collaborator on selected repos from my personal
+`guynich` account.
 
 ## License & Notice
 
